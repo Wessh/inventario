@@ -81,4 +81,37 @@ export const styles = StyleSheet.create({
   saveButton: {
     marginTop: 8,
   },
+  // Estilos do diálogo
+  dialogInput: {
+    marginBottom: 16,
+  },
+  // Estilos do contador de quantidade
+  quantidadeContainer: {
+    marginBottom: 16,
+  },
+  quantidadeLabel: {
+    fontSize: 16,
+    color: '#424242',
+    marginBottom: 8,
+  },
+  quantidadeControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    padding: 4,
+  },
+  quantidadeButton: {
+    margin: 0,
+    borderRadius: 20,
+    elevation: 2,
+  },
+  quantidadeInput: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    minWidth: 40,
+    marginHorizontal: 16,
+    backgroundColor: 'transparent',
+  },
 });
