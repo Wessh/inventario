@@ -21,14 +21,6 @@ export const Home = () => {
   React.useEffect(() => {
     navigation.setOptions({
       headerTitle: 'Inventário',
-      headerRight: () => (
-        <IconButton
-          icon="cog"
-          iconColor="#fff"
-          size={24}
-          onPress={() => navigation.navigate('Settings')}
-        />
-      ),
     });
   }, [navigation]);
 
@@ -56,7 +48,7 @@ export const Home = () => {
       <View style={styles.content}>
         <Surface style={styles.card} elevation={2}>
           <Text variant="headlineMedium" style={styles.text}>
-            Olá Mundo
+            Lista de Itens
           </Text>
         </Surface>
       </View>
