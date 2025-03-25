@@ -12,9 +12,17 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {PaperProvider, MD3LightTheme, IconButton} from 'react-native-paper';
 import {Home} from './src/screens/Home';
 import {Settings} from './src/screens/Settings';
-import { styles } from './src/styles/home.styles';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
+
+type RootStackParamList = {
+  Home: undefined;
+  Settings: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const theme = {
   ...MD3LightTheme,
@@ -24,6 +32,19 @@ const theme = {
     secondary: '#03DAC6',
     background: '#F5F5F5',
   },
+};
+
+const SettingsButton = () => {
+  const navigation = useNavigation<NavigationProp>();
+
+  return (
+    <IconButton
+      icon="cog"
+      iconColor={theme.colors.onPrimary}
+      size={24}
+      onPress={() => navigation.navigate('Settings')}
+    />
+  );
 };
 
 const App = () => {
@@ -41,17 +62,14 @@ const App = () => {
               headerTitleStyle: {
                 fontWeight: 'bold',
               },
-              headerRight: () => (
-                <IconButton
-                  icon="cog"
-                  iconColor={theme.colors.onPrimary}
-                  size={24}
-                  style={styles.headerIcon}
-                  onPress={() => {}}
-                />
-              ),
             }}>
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerRight: () => <SettingsButton />,
+              }}
+            />
             <Stack.Screen name="Settings" component={Settings} />
           </Stack.Navigator>
         </NavigationContainer>
