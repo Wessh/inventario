@@ -12,6 +12,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {PaperProvider, MD3LightTheme, IconButton} from 'react-native-paper';
 import {Home} from './src/screens/Home';
 import {Settings} from './src/screens/Settings';
+import { styles } from './src/styles/home.styles';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,8 +46,8 @@ const App = () => {
                   icon="cog"
                   iconColor={theme.colors.onPrimary}
                   size={24}
+                  style={styles.headerIcon}
                   onPress={() => {}}
-                  style={{marginRight: 8}}
                 />
               ),
             }}>

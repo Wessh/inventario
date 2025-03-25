@@ -28,22 +28,30 @@ export const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
+    padding: 12,
+    paddingBottom: 0,
   },
   card: {
-    padding: 24,
+    flex: 1,
     borderRadius: 8,
     backgroundColor: '#fff',
+  },
+  listContent: {
+    paddingVertical: 8,
   },
   text: {
     textAlign: 'center',
   },
   headerRight: {
-    marginRight: 15,
+    marginRight: 8,
   },
   headerIcon: {
-    fontSize: 24,
+    margin: 0,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 8,
+    bottom: 8,
   },
 });
