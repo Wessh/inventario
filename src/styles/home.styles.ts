@@ -28,13 +28,13 @@ export const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 12,
-    paddingBottom: 0,
+    padding: 16,
   },
   card: {
     flex: 1,
     borderRadius: 8,
     backgroundColor: '#fff',
+    padding: 16,
   },
   listContent: {
     paddingVertical: 8,
@@ -61,7 +61,24 @@ export const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     margin: 16,
-    right: 8,
-    bottom: 8,
+    right: 0,
+    bottom: 0,
+  },
+  // Estilos da tela de configurações
+  settingsTitle: {
+    marginBottom: 24,
+    color: '#1976D2',
+  },
+  settingsContent: {
+    gap: 16,
+  },
+  settingsLabel: {
+    color: '#424242',
+  },
+  settingsInput: {
+    backgroundColor: '#fff',
+  },
+  saveButton: {
+    marginTop: 8,
   },
 });
