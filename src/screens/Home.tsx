@@ -3,8 +3,9 @@ import {View, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {IconButton, Surface, Searchbar, useTheme, List, Divider, FAB} from 'react-native-paper';
+import {IconButton, Surface, Searchbar, useTheme, Divider, FAB} from 'react-native-paper';
 import {styles} from '../styles/home.styles';
+import {ItemCard} from '../components/ItemCard';
 
 type RootStackParamList = {
   Home: undefined;
@@ -18,14 +19,15 @@ type Item = {
   nome: string;
   marca: string;
   categoria: string;
+  quantidade: number;
 };
 
 const itensIniciais: Item[] = [
-  {id: '1', nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos'},
-  {id: '2', nome: 'Mouse Wireless', marca: 'Logitech', categoria: 'Periféricos'},
-  {id: '3', nome: 'Monitor 24"', marca: 'LG', categoria: 'Eletrônicos'},
-  {id: '4', nome: 'Teclado Mecânico', marca: 'Razer', categoria: 'Periféricos'},
-  {id: '5', nome: 'Impressora', marca: 'HP', categoria: 'Impressão'},
+  {id: '1', nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos', quantidade: 5},
+  {id: '2', nome: 'Mouse Wireless', marca: 'Logitech', categoria: 'Periféricos', quantidade: 12},
+  {id: '3', nome: 'Monitor 24"', marca: 'LG', categoria: 'Eletrônicos', quantidade: 8},
+  {id: '4', nome: 'Teclado Mecânico', marca: 'Razer', categoria: 'Periféricos', quantidade: 15},
+  {id: '5', nome: 'Impressora', marca: 'HP', categoria: 'Impressão', quantidade: 3},
 ];
 
 export const Home = () => {
@@ -40,14 +42,7 @@ export const Home = () => {
     });
   }, [navigation]);
 
-  const renderItem = ({item}: {item: Item}) => (
-    <List.Item
-      title={item.nome}
-      description={`${item.marca} • ${item.categoria}`}
-      left={props => <List.Icon {...props} icon="package-variant" />}
-      right={props => <List.Icon {...props} icon="chevron-right" />}
-    />
-  );
+  const renderItem = ({item}: {item: Item}) => <ItemCard item={item} />;
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -60,6 +55,7 @@ export const Home = () => {
             style={styles.searchBar}
             inputStyle={styles.searchInput}
             iconColor={theme.colors.primary}
+            placeholderTextColor="#757575"
           />
           <IconButton
             icon="filter-variant"

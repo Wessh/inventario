@@ -39,6 +39,16 @@ export const styles = StyleSheet.create({
   listContent: {
     paddingVertical: 8,
   },
+  itemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  quantidade: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1976D2',
+  },
   text: {
     textAlign: 'center',
   },
