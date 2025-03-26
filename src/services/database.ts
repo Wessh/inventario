@@ -1,88 +1,79 @@
-import SQLite from 'react-native-sqlite-storage';
+import SQLite, { SQLiteDatabase } from 'react-native-sqlite-storage';
 
-// Habilitar o SQLite
-SQLite.enablePromise(true);
+let db: SQLiteDatabase;
 
-// Configuração do banco de dados
-const database_name = 'Inventario.db';
-const database_version = '1.0';
-const database_displayname = 'Inventario SQLite Database';
-const database_size = 200000;
+export const openDatabase = async (): Promise<SQLiteDatabase> => {
+  return new Promise((resolve, reject) => {
+    SQLite.openDatabase(
+      { name: 'inventario.db', location: 'default' },
+      (database) => {
+        db = database;
+        db.transaction((tx) => {
+          console.log('Tabela inventario criada com sucesso!');
+          tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS inventario (
+              id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              nome TEXT,
+              quantidade INTEGER
+            );`,
+            [],
+            () => console.log('Tabela inventario criada com sucesso!'),
+            (_, error) => console.error('Erro ao criar tabela inventario:', error)
+          );
 
-const dbConfig = {
-  name: database_name,
-  version: database_version,
-  displayName: database_displayname,
-  size: database_size,
+          tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS configuracoes (
+              id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              nome_aplicativo TEXT
+            );`,
+            [],
+            () => console.log('Tabela configuracoes criada com sucesso!'),
+            (_, error) => console.error('Erro ao criar tabela configuracoes:', error)
+          );
+
+          tx.executeSql(
+            `INSERT INTO configuracoes (nome_aplicativo) 
+              SELECT 'Inventário'
+              WHERE NOT EXISTS (SELECT 1 FROM configuracoes WHERE id = 1);`,
+            [],
+            () => console.log('Dados inseridos em configuracoes com sucesso!'),
+            (_, error) => console.error('Erro ao inserir dados em configuracoes:', error)
+          );
+
+          tx.executeSql(
+            'SELECT * FROM configuracoes;',
+            [],
+            (_, results) => {
+              if (results.rows.length > 0) {
+                console.log(results.rows.item(0).nome_aplicativo);
+              }
+              resolve(db);
+            },
+            (_, error) => {
+              console.error('Erro ao selecionar dados de configuracoes:', error);
+              reject(error);
+            }
+          );
+        });
+      },
+      (error) => {
+        console.error('Erro ao abrir o banco de dados:', error);
+        reject(error);
+      }
+    );
+  });
 };
 
-// Função para verificar e criar a tabela inventory
-export const createTables = async (db: SQLite.SQLiteDatabase) => {
-  try {
-    // Criar tabela inventory
-    await db.executeSql(`
-      CREATE TABLE IF NOT EXISTS inventory (
-        id TEXT PRIMARY KEY,
-        nome TEXT NOT NULL,
-        marca TEXT NOT NULL,
-        categoria TEXT NOT NULL,
-        quantidade INTEGER NOT NULL
-      )
-    `);
-    console.log('Tabela inventory verificada/criada com sucesso');
-
-    // Criar tabela app_settings
-    await db.executeSql(`
-      CREATE TABLE IF NOT EXISTS app_settings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        app_name TEXT NOT NULL
-      );
-        INSERT INTO app_settings (app_name)  
-        SELECT  'Inventário'
-        WHERE NOT EXISTS (SELECT 1 FROM app_settings where id = 1);
-    `);
-    console.log('Tabela app_settings verificada/criada com sucesso');
-  } catch (error) {
-    console.error('Erro ao verificar/criar tabelas:', error);
-    throw error;
-  }
+export const updateConfig = async (nome_aplicativo: string) => {
+  return new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql('UPDATE configuracoes SET nome_aplicativo = ? WHERE id = 1;', [nome_aplicativo], (_, results) => {
+        resolve(results);
+      });
+    });
+  });
 };
 
-// Função para abrir a conexão com o banco de dados
-export const openDatabase = async () => {
-  try {
-    const db = await SQLite.openDatabase(dbConfig);
-    console.log('Conexão com o banco de dados estabelecida com sucesso');
-    await createTables(db);
-    return db;
-  } catch (error) {
-    console.error('Erro ao abrir o banco de dados:', error);
-    throw error;
-  }
-};
-
-// Função para fechar a conexão com o banco de dados
-export const closeDatabase = async (db: SQLite.SQLiteDatabase) => {
-  try {
-    await db.close();
-    console.log('Conexão com o banco de dados fechada com sucesso');
-  } catch (error) {
-    console.error('Erro ao fechar o banco de dados:', error);
-    throw error;
-  }
-};
-
-// Função para atualizar o nome do aplicativo
-export const updateAppName = async (db: SQLite.SQLiteDatabase, appName: string) => {
-  try {
-    await db.executeSql(`
-      UPDATE app_settings 
-      SET app_name = ? 
-      WHERE id = 1
-    `, [appName]);
-    console.log('Nome do aplicativo atualizado com sucesso');
-  } catch (error) {
-    console.error('Erro ao atualizar nome do aplicativo:', error);
-    throw error;
-  }
+export const getDb = () => {
+  return db;
 };

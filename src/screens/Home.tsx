@@ -1,7 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, FlatList, Text} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {IconButton, Surface, Searchbar, useTheme, Divider, FAB} from 'react-native-paper';
 import {styles} from '../styles/home.styles';
@@ -12,12 +10,7 @@ import {FilterDialog} from '../components/FilterDialog';
 import {ActiveFilters} from '../components/ActiveFilters';
 import {Item} from '../types/item';
 
-type RootStackParamList = {
-  Home: undefined;
-  Settings: undefined;
-};
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const itensIniciais: Item[] = [
   {id: '1', nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos', quantidade: 5},
@@ -27,8 +20,13 @@ const itensIniciais: Item[] = [
   {id: '5', nome: 'Impressora', marca: 'HP', categoria: 'Impressão', quantidade: 3},
 ];
 
+const EmptyListComponent = () => (
+  <View style={styles.emptyContainer}>
+    <Text style={styles.emptyText}>Não possui itens registrados</Text>
+  </View>
+);
+
 export const Home = () => {
-  const navigation = useNavigation<NavigationProp>();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<Item[]>(itensIniciais);
@@ -45,11 +43,9 @@ export const Home = () => {
     };
   }>({});
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'Inventário',
-    });
-  }, [navigation]);
+  useEffect(() => {
+
+  },[]);
 
   const handleAdicionarItem = (novoItem: Omit<Item, 'id'>) => {
     const novoId = (items.length + 1).toString();
@@ -152,11 +148,7 @@ export const Home = () => {
             keyExtractor={item => item.id}
             ItemSeparatorComponent={() => <Divider />}
             contentContainerStyle={styles.listContent}
-            ListEmptyComponent={() => (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>Não possui itens registrados</Text>
-              </View>
-            )}
+            ListEmptyComponent={EmptyListComponent}
           />
         </Surface>
       </View>
