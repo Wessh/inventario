@@ -74,6 +74,15 @@ export const updateConfig = async (nome_aplicativo: string) => {
   });
 };
 
+export const getNomeAplicativo = async () => {
+  return new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql('SELECT nome_aplicativo FROM configuracoes WHERE id = 1;', [], (_, results) => {
+        resolve(results.rows.item(0).nome_aplicativo);
+      });
+    });
+  });
+};
 export const getDb = () => {
   return db;
 };

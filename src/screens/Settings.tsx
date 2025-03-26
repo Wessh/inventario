@@ -3,12 +3,13 @@ import {View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Text, Surface, TextInput, Button} from 'react-native-paper';
 import {styles} from '../styles/home.styles';
+import {updateConfig} from '../services/database';
 
 export const Settings = () => {
   const [appTitle, setAppTitle] = useState('Inventário');
 
   const handleSaveTitle = () => {
-    // TODO: Implementar a lógica para salvar o título
+    updateConfig(appTitle);
     console.log('Novo título:', appTitle);
   };
 

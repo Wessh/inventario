@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useState, useEffect} from 'react';
 import {View, FlatList, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';

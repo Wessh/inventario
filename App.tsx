@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -5,7 +6,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -14,6 +15,7 @@ import {Home} from './src/screens/Home';
 import {Settings} from './src/screens/Settings';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {getDb, openDatabase, getNomeAplicativo} from './src/services/database';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,13 +49,26 @@ const SettingsButton = () => {
   );
 };
 
+
 const App = () => {
+  const [appName, setAppName] = useState<string | string>('Inventário');
+    const initializeDb = async () => {
+      await openDatabase();
+      const db = getDb();
+      console.log(`db: ${db.dbname}`);
+      await getNomeAplicativo().then((nome) => {
+        setAppName(nome as string);
+      });
+    };
+    initializeDb();
+    console.log(`appName: ${appName}`);
+
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Home"
+            initialRouteName={appName}
             screenOptions={{
               headerStyle: {
                 backgroundColor: theme.colors.primary,
@@ -64,7 +79,7 @@ const App = () => {
               },
             }}>
             <Stack.Screen
-              name="Home"
+              name={appName}
               component={Home}
               options={{
                 headerRight: () => <SettingsButton />,
