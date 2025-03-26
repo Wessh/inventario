@@ -9,6 +9,7 @@ import {ItemCard} from '../components/ItemCard';
 import {AddItemDialog} from '../components/AddItemDialog';
 import {EditItemDialog} from '../components/EditItemDialog';
 import {FilterDialog} from '../components/FilterDialog';
+import {ActiveFilters} from '../components/ActiveFilters';
 import {Item} from '../types/item';
 
 type RootStackParamList = {
@@ -75,6 +76,14 @@ export const Home = () => {
     setFilters(novosFiltros);
   };
 
+  const handleRemoverFiltro = (filterType: 'categoria' | 'marca' | 'quantidade') => {
+    setFilters(prev => {
+      const newFilters = {...prev};
+      delete newFilters[filterType];
+      return newFilters;
+    });
+  };
+
   const getCategorias = () => {
     return Array.from(new Set(items.map(item => item.categoria)));
   };
@@ -133,6 +142,7 @@ export const Home = () => {
             style={styles.filterButton}
           />
         </View>
+        <ActiveFilters filters={filters} onRemoveFilter={handleRemoverFiltro} />
       </View>
       <View style={styles.content}>
         <Surface style={styles.card} elevation={2}>
