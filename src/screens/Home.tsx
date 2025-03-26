@@ -45,7 +45,7 @@ export const Home = () => {
   }>({});
 
   useEffect(() => {
-
+    //To-Do: Carregar itens do banco de dados
   },[]);
 
   const handleAdicionarItem = (novoItem: Omit<Item, 'id'>) => {

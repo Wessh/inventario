@@ -1,12 +1,18 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Text, Surface, TextInput, Button} from 'react-native-paper';
 import {styles} from '../styles/home.styles';
-import {updateConfig} from '../services/database';
+import {getNomeAplicativo, updateConfig} from '../services/database';
 
 export const Settings = () => {
   const [appTitle, setAppTitle] = useState('Inventário');
+
+  useEffect(() => {
+    getNomeAplicativo().then((nome) => {
+      setAppTitle(nome as string);
+    });
+  }, []);
 
   const handleSaveTitle = () => {
     updateConfig(appTitle);
