@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Modal,
   View,
@@ -11,39 +11,47 @@ import {
 import {styles} from '../styles/dialog.styles';
 import {Item} from '../types/item';
 
-type AddItemDialogProps = {
+type EditItemDialogProps = {
   visible: boolean;
   onDismiss: () => void;
-  onAdd: (item: Omit<Item, 'id'>) => void;
+  onEdit: (item: Item) => void;
+  item: Item | null;
 };
 
-export const AddItemDialog = ({
+export const EditItemDialog = ({
   visible,
   onDismiss,
-  onAdd,
-}: AddItemDialogProps) => {
+  onEdit,
+  item,
+}: EditItemDialogProps) => {
   const [nome, setNome] = useState('');
   const [marca, setMarca] = useState('');
   const [categoria, setCategoria] = useState('');
   const [quantidade, setQuantidade] = useState('1');
+
+  useEffect(() => {
+    if (item) {
+      setNome(item.nome);
+      setMarca(item.marca);
+      setCategoria(item.categoria);
+      setQuantidade(item.quantidade.toString());
+    }
+  }, [item]);
 
   const handleSalvar = () => {
     if (!nome.trim() || !marca.trim() || !categoria.trim()) {
       return;
     }
 
-    onAdd({
-      nome: nome.trim(),
-      marca: marca.trim(),
-      categoria: categoria.trim(),
-      quantidade: parseInt(quantidade, 10),
-    });
-
-    // Limpar campos após adicionar
-    setNome('');
-    setMarca('');
-    setCategoria('');
-    setQuantidade('1');
+    if (item) {
+      onEdit({
+        ...item,
+        nome: nome.trim(),
+        marca: marca.trim(),
+        categoria: categoria.trim(),
+        quantidade: parseInt(quantidade, 10),
+      });
+    }
   };
 
   const handleAumentarQuantidade = () => {
@@ -68,7 +76,7 @@ export const AddItemDialog = ({
         style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Adicionar Item</Text>
+            <Text style={styles.modalTitle}>Editar Item</Text>
             <TouchableOpacity onPress={onDismiss}>
               <Text style={styles.closeButton}>✕</Text>
             </TouchableOpacity>

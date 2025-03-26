@@ -7,6 +7,8 @@ import {IconButton, Surface, Searchbar, useTheme, Divider, FAB} from 'react-nati
 import {styles} from '../styles/home.styles';
 import {ItemCard} from '../components/ItemCard';
 import {AddItemDialog} from '../components/AddItemDialog';
+import {EditItemDialog} from '../components/EditItemDialog';
+import {Item} from '../types/item';
 
 type RootStackParamList = {
   Home: undefined;
@@ -14,14 +16,6 @@ type RootStackParamList = {
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-
-type Item = {
-  id: string;
-  nome: string;
-  marca: string;
-  categoria: string;
-  quantidade: number;
-};
 
 const itensIniciais: Item[] = [
   {id: '1', nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos', quantidade: 5},
@@ -37,6 +31,8 @@ export const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [itens, setItens] = useState<Item[]>(itensIniciais);
   const [visible, setVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
+  const [itemSelecionado, setItemSelecionado] = useState<Item | null>(null);
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -46,6 +42,14 @@ export const Home = () => {
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
+  const showEditDialog = (item: Item) => {
+    setItemSelecionado(item);
+    setEditVisible(true);
+  };
+  const hideEditDialog = () => {
+    setItemSelecionado(null);
+    setEditVisible(false);
+  };
 
   const handleAdicionarItem = (novoItem: Omit<Item, 'id'>) => {
     const novoId = (itens.length + 1).toString();
@@ -53,7 +57,14 @@ export const Home = () => {
     hideDialog();
   };
 
-  const renderItem = ({item}: {item: Item}) => <ItemCard item={item} />;
+  const handleEditarItem = (itemEditado: Item) => {
+    setItens(itens.map(item => (item.id === itemEditado.id ? itemEditado : item)));
+    hideEditDialog();
+  };
+
+  const renderItem = ({item}: {item: Item}) => (
+    <ItemCard item={item} onPress={showEditDialog} />
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -92,6 +103,12 @@ export const Home = () => {
         visible={visible}
         onDismiss={hideDialog}
         onAdd={handleAdicionarItem}
+      />
+      <EditItemDialog
+        visible={editVisible}
+        onDismiss={hideEditDialog}
+        onEdit={handleEditarItem}
+        item={itemSelecionado}
       />
       <FAB
         icon="plus"
