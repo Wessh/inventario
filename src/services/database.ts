@@ -73,13 +73,13 @@ export const closeDatabase = async (db: SQLite.SQLiteDatabase) => {
 };
 
 // Função para atualizar o nome do aplicativo
-export const updateAppName = async (db: SQLite.SQLiteDatabase) => {
+export const updateAppName = async (db: SQLite.SQLiteDatabase, appName: string) => {
   try {
     await db.executeSql(`
       UPDATE app_settings 
-      SET app_name = Inventário 
+      SET app_name = ? 
       WHERE id = 1
-    `);
+    `, [appName]);
     console.log('Nome do aplicativo atualizado com sucesso');
   } catch (error) {
     console.error('Erro ao atualizar nome do aplicativo:', error);
