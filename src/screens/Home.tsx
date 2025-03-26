@@ -3,9 +3,10 @@ import {View, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {IconButton, Surface, Searchbar, useTheme, Divider, FAB, Portal, Dialog, TextInput, Button, Text} from 'react-native-paper';
+import {IconButton, Surface, Searchbar, useTheme, Divider, FAB} from 'react-native-paper';
 import {styles} from '../styles/home.styles';
 import {ItemCard} from '../components/ItemCard';
+import {AddItemDialog} from '../components/AddItemDialog';
 
 type RootStackParamList = {
   Home: undefined;
@@ -36,12 +37,6 @@ export const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [itens, setItens] = useState<Item[]>(itensIniciais);
   const [visible, setVisible] = useState(false);
-  const [novoItem, setNovoItem] = useState<Omit<Item, 'id'>>({
-    nome: '',
-    marca: '',
-    categoria: '',
-    quantidade: 0,
-  });
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -52,35 +47,10 @@ export const Home = () => {
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
-  const handleAdicionarItem = () => {
-    if (novoItem.nome && novoItem.marca && novoItem.categoria && novoItem.quantidade > 0) {
-      const novoId = (itens.length + 1).toString();
-      setItens([...itens, {...novoItem, id: novoId}]);
-      setNovoItem({
-        nome: '',
-        marca: '',
-        categoria: '',
-        quantidade: 0,
-      });
-      hideDialog();
-    }
-  };
-
-  const incrementarQuantidade = () => {
-    setNovoItem({...novoItem, quantidade: novoItem.quantidade + 1});
-  };
-
-  const decrementarQuantidade = () => {
-    if (novoItem.quantidade > 0) {
-      setNovoItem({...novoItem, quantidade: novoItem.quantidade - 1});
-    }
-  };
-
-  const handleQuantidadeChange = (text: string) => {
-    const numero = parseInt(text) || 0;
-    if (numero >= 0) {
-      setNovoItem({...novoItem, quantidade: numero});
-    }
+  const handleAdicionarItem = (novoItem: Omit<Item, 'id'>) => {
+    const novoId = (itens.length + 1).toString();
+    setItens([...itens, {...novoItem, id: novoId}]);
+    hideDialog();
   };
 
   const renderItem = ({item}: {item: Item}) => <ItemCard item={item} />;
@@ -118,64 +88,11 @@ export const Home = () => {
           />
         </Surface>
       </View>
-      <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
-          <Dialog.Title>Adicionar Novo Item</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              label="Nome"
-              value={novoItem.nome}
-              onChangeText={text => setNovoItem({...novoItem, nome: text})}
-              style={styles.dialogInput}
-            />
-            <TextInput
-              label="Marca"
-              value={novoItem.marca}
-              onChangeText={text => setNovoItem({...novoItem, marca: text})}
-              style={styles.dialogInput}
-            />
-            <TextInput
-              label="Categoria"
-              value={novoItem.categoria}
-              onChangeText={text => setNovoItem({...novoItem, categoria: text})}
-              style={styles.dialogInput}
-            />
-            <View style={styles.quantidadeContainer}>
-              <Text style={styles.quantidadeLabel}>Quantidade</Text>
-              <View style={[styles.quantidadeControls, {backgroundColor: theme.colors.surfaceVariant}]}>
-                <IconButton
-                  icon="minus"
-                  size={24}
-                  onPress={decrementarQuantidade}
-                  disabled={novoItem.quantidade === 0}
-                  style={[styles.quantidadeButton, {backgroundColor: theme.colors.surface}]}
-                  iconColor={novoItem.quantidade === 0 ? theme.colors.onSurfaceDisabled : theme.colors.primary}
-                />
-                <TextInput
-                  value={novoItem.quantidade.toString()}
-                  onChangeText={handleQuantidadeChange}
-                  keyboardType="numeric"
-                  style={[styles.quantidadeInput, {color: theme.colors.primary}]}
-                  dense
-                  mode="flat"
-                  underlineStyle={{display: 'none'}}
-                />
-                <IconButton
-                  icon="plus"
-                  size={24}
-                  onPress={incrementarQuantidade}
-                  style={[styles.quantidadeButton, {backgroundColor: theme.colors.surface}]}
-                  iconColor={theme.colors.primary}
-                />
-              </View>
-            </View>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideDialog}>Cancelar</Button>
-            <Button onPress={handleAdicionarItem}>Adicionar</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <AddItemDialog
+        visible={visible}
+        onDismiss={hideDialog}
+        onAdd={handleAdicionarItem}
+      />
       <FAB
         icon="plus"
         style={styles.fab}
