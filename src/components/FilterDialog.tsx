@@ -61,6 +61,14 @@ export const FilterDialog = ({
     onDismiss();
   };
 
+  const toggleCategoria = (cat: string) => {
+    setCategoria(categoria === cat ? '' : cat);
+  };
+
+  const toggleMarca = (m: string) => {
+    setMarca(marca === m ? '' : m);
+  };
+
   return (
     <Modal
       visible={visible}
@@ -80,7 +88,7 @@ export const FilterDialog = ({
                     styles.categoriaButton,
                     categoria === cat && styles.categoriaButtonSelected,
                   ]}
-                  onPress={() => setCategoria(cat)}>
+                  onPress={() => toggleCategoria(cat)}>
                   <Text
                     style={[
                       styles.categoriaButtonText,
@@ -101,7 +109,7 @@ export const FilterDialog = ({
                     styles.marcaButton,
                     marca === m && styles.marcaButtonSelected,
                   ]}
-                  onPress={() => setMarca(m)}>
+                  onPress={() => toggleMarca(m)}>
                   <Text
                     style={[
                       styles.marcaButtonText,
