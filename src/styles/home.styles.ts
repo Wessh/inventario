@@ -28,16 +28,19 @@ export const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    paddingBottom: 0,
   },
   card: {
     flex: 1,
     borderRadius: 8,
     backgroundColor: '#fff',
     padding: 16,
+    marginBottom: 0,
   },
   listContent: {
-    paddingVertical: 8,
+    flexGrow: 1,
   },
   itemRight: {
     flexDirection: 'row',
