@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, FlatList} from 'react-native';
+import {View, FlatList, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -152,6 +152,11 @@ export const Home = () => {
             keyExtractor={item => item.id}
             ItemSeparatorComponent={() => <Divider />}
             contentContainerStyle={styles.listContent}
+            ListEmptyComponent={() => (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>Não possui itens registrados</Text>
+              </View>
+            )}
           />
         </Surface>
       </View>

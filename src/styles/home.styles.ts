@@ -106,6 +106,17 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     minWidth: 40,
     marginHorizontal: 16,
-    backgroundColor: 'transparent',
+    color: '#1976D2',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#757575',
+    textAlign: 'center',
   },
 });
