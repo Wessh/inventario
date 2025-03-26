@@ -36,7 +36,10 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
       CREATE TABLE IF NOT EXISTS app_settings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         app_name TEXT NOT NULL
-      )
+      );
+        INSERT INTO app_settings (app_name)  
+        SELECT  'Inventário'
+        WHERE NOT EXISTS (SELECT 1 FROM app_settings where id = 1);
     `);
     console.log('Tabela app_settings verificada/criada com sucesso');
   } catch (error) {
@@ -65,6 +68,21 @@ export const closeDatabase = async (db: SQLite.SQLiteDatabase) => {
     console.log('Conexão com o banco de dados fechada com sucesso');
   } catch (error) {
     console.error('Erro ao fechar o banco de dados:', error);
+    throw error;
+  }
+};
+
+// Função para atualizar o nome do aplicativo
+export const updateAppName = async (db: SQLite.SQLiteDatabase) => {
+  try {
+    await db.executeSql(`
+      UPDATE app_settings 
+      SET app_name = Inventário 
+      WHERE id = 1
+    `);
+    console.log('Nome do aplicativo atualizado com sucesso');
+  } catch (error) {
+    console.error('Erro ao atualizar nome do aplicativo:', error);
     throw error;
   }
 };
