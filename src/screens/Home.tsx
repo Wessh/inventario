@@ -62,8 +62,16 @@ export const Home = () => {
     hideEditDialog();
   };
 
+  const handleExcluirItem = (item: Item) => {
+    setItens(itens.filter(i => i.id !== item.id));
+  };
+
   const renderItem = ({item}: {item: Item}) => (
-    <ItemCard item={item} onPress={showEditDialog} />
+    <ItemCard
+      item={item}
+      onPress={showEditDialog}
+      onDelete={handleExcluirItem}
+    />
   );
 
   return (

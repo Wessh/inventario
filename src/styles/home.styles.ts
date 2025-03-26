@@ -42,36 +42,6 @@ export const styles = StyleSheet.create({
   listContent: {
     flexGrow: 1,
   },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemName: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#212121',
-  },
-  itemDetails: {
-    fontSize: 14,
-    color: '#757575',
-    marginTop: 4,
-  },
-  itemRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  quantidade: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1976D2',
-  },
   text: {
     textAlign: 'center',
   },
