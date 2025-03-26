@@ -1,4 +1,5 @@
 import SQLite, { SQLiteDatabase } from 'react-native-sqlite-storage';
+import { Item } from '../types/item';
 
 let db: SQLiteDatabase;
 
@@ -64,6 +65,16 @@ export const openDatabase = async (): Promise<SQLiteDatabase> => {
   });
 };
 
+export const getNomeAplicativo = async () => {
+  return new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql('SELECT nome_aplicativo FROM configuracoes WHERE id = 1;', [], (_, results) => {
+        resolve(results.rows.item(0).nome_aplicativo);
+      });
+    });
+  });
+};
+
 export const updateConfig = async (nome_aplicativo: string) => {
   return new Promise((resolve) => {
     db.transaction((tx) => {
@@ -74,15 +85,51 @@ export const updateConfig = async (nome_aplicativo: string) => {
   });
 };
 
-export const getNomeAplicativo = async () => {
+//Carrega todos os itens da tabela inventario
+export const getItens = async () => {
   return new Promise((resolve) => {
     db.transaction((tx) => {
-      tx.executeSql('SELECT nome_aplicativo FROM configuracoes WHERE id = 1;', [], (_, results) => {
-        resolve(results.rows.item(0).nome_aplicativo);
+      tx.executeSql('SELECT * FROM inventario;', [], (_, results) => {
+        resolve(results);
       });
     });
   });
 };
+
+//Adiciona um item na tabela inventario
+export const addItem = async (item: Item) => {
+  return new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql('INSERT INTO inventario (nome, quantidade) VALUES (?, ?);', [item.nome, item.quantidade], (_, results) => {
+        resolve(results);
+      });
+    });
+  });
+  };
+
+//Atualiza um item na tabela inventario
+export const updateItem = async (item: Item) => {
+  return new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql('UPDATE inventario SET nome = ?, quantidade = ? WHERE id = ?;', [item.nome, item.quantidade, item.id], (_, results) => {
+        resolve(results);
+      });
+    });
+  });
+};
+
+//Exclui um item da tabela inventario
+export const deleteItem = async (id: number) => {
+  return new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql('DELETE FROM inventario WHERE id = ?;', [id], (_, results) => {
+        resolve(results);
+      });
+    });
+  });
+};
+
+//Retorna o banco de dados
 export const getDb = () => {
   return db;
 };
