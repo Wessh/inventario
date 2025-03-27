@@ -75,6 +75,7 @@ export const updateConfig = async (nome_aplicativo: string) => {
   });
 };
 
+//Adiciona um item na tabela inventario
 export const addItem = async (item: Item) => {
   console.log('Adicionando item:', item);
   return new Promise((resolve, reject) => {
@@ -108,6 +109,7 @@ export const addItem = async (item: Item) => {
 export const closeDatabase = async () => {
   await db.close();
 };
+
 //Retorna o banco de dados
 export const getDb = () => {
   return db;

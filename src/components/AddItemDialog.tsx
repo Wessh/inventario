@@ -50,6 +50,7 @@ export const AddItemDialog = ({
     try {
       await addItem(newItem);
       console.log('Item adicionado com sucesso!');
+      onDismiss();
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
     }
