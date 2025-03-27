@@ -10,16 +10,7 @@ import {EditItemDialog} from '../components/EditItemDialog';
 import {FilterDialog} from '../components/FilterDialog';
 import {ActiveFilters} from '../components/ActiveFilters';
 import {Item} from '../types/item';
-
-
-
-const itensIniciais: Item[] = [
-  {id: 1, nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos', quantidade: 5},
-  {id: 2, nome: 'Mouse Wireless', marca: 'Logitech', categoria: 'Periféricos', quantidade: 12},
-  {id: 3, nome: 'Monitor 24"', marca: 'LG', categoria: 'Eletrônicos', quantidade: 8},
-  {id: 4, nome: 'Teclado Mecânico', marca: 'Razer', categoria: 'Periféricos', quantidade: 15},
-  {id: 5, nome: 'Impressora', marca: 'HP', categoria: 'Impressão', quantidade: 3},
-];
+import {getItems, addItem, updateItem, deleteItem} from '../services/database'; // Adicione este import
 
 const EmptyListComponent = () => (
   <View style={styles.emptyContainer}>
@@ -30,7 +21,7 @@ const EmptyListComponent = () => (
 export const Home = () => {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
-  const [items, setItems] = useState<Item[]>(itensIniciais);
+  const [items, setItems] = useState<Item[]>([]); // Inicialize com array vazio
   const [addDialogVisible, setAddDialogVisible] = useState(false);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [filterDialogVisible, setFilterDialogVisible] = useState(false);
@@ -44,24 +35,55 @@ export const Home = () => {
     };
   }>({});
 
+  const carregarItens = async () => {
+    try {
+      console.log('Carregando itens do banco de dados...');
+      const itensCarregados = await getItems();
+      console.log('Itens carregados:', itensCarregados);
+      setItems(itensCarregados as Item[]);
+    } catch (error) {
+      console.error('Erro ao carregar itens:', error);
+    }
+  };
+
   useEffect(() => {
-    //To-Do: Carregar itens do banco de dados
-  },[]);
+    carregarItens();
+  }, []);
 
-  const handleAdicionarItem = (novoItem: Omit<Item, 'id'>) => {
-    const novoId = (items.length + 1);
-    setItems([...items, {...novoItem, id: novoId}]);
-    setAddDialogVisible(false);
+  const handleAdicionarItem = async (novoItem: Omit<Item, 'id'>) => {
+    try {
+      await addItem(novoItem);
+      await carregarItens(); // Recarrega a lista após adicionar
+      setAddDialogVisible(false);
+    } catch (error) {
+      console.error('Erro ao adicionar item:', error);
+    }
   };
 
-  const handleEditarItem = (itemEditado: Item) => {
-    setItems(items.map(item => (item.id === itemEditado.id ? itemEditado : item)));
-    setEditDialogVisible(false);
-    setSelectedItem(null);
+  const handleEditarItem = async (itemEditado: Item) => {
+    try {
+      await updateItem(itemEditado);
+      const itensAtualizados = await getItems();
+      setItems(itensAtualizados as Item[]);
+      setEditDialogVisible(false);
+      setSelectedItem(null);
+    } catch (error) {
+      console.error('Erro ao editar item:', error);
+    }
   };
 
-  const handleExcluirItem = (item: Item) => {
-    setItems(items.filter(i => i.id !== item.id));
+  const handleExcluirItem = async (item: Item) => {
+    try {
+      if (item.id !== undefined) {
+        await deleteItem(item.id);
+      } else {
+        console.error('Erro: O item não possui um ID válido.');
+      }
+      const itensAtualizados = await getItems();
+      setItems(itensAtualizados as Item[]);
+    } catch (error) {
+      console.error('Erro ao excluir item:', error);
+    }
   };
 
   const handleAbrirEdicao = (item: Item) => {

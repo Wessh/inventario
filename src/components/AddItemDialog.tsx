@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {styles} from '../styles/dialog.styles';
 import {Item} from '../types/item';
-import {addItem} from '../services/database';
 
 type AddItemDialogProps = {
   visible: boolean;
@@ -21,7 +20,7 @@ type AddItemDialogProps = {
 export const AddItemDialog = ({
   visible,
   onDismiss,
-  //onAdd,
+  onAdd,
 }: AddItemDialogProps) => {
   const [nome, setNome] = useState('');
   const [marca, setMarca] = useState('');
@@ -32,13 +31,6 @@ export const AddItemDialog = ({
     if (!nome.trim() || !marca.trim() || !categoria.trim()) {
       return;
     }
-/*
-    onAdd({
-      nome: nome.trim(),
-      marca: marca.trim(),
-      categoria: categoria.trim(),
-      quantidade: parseInt(quantidade, 10),
-    });*/
 
     const newItem: Omit<Item, 'id'> = {
       nome: nome.trim(),
@@ -48,18 +40,16 @@ export const AddItemDialog = ({
     };
 
     try {
-      await addItem(newItem);
-      console.log('Item adicionado com sucesso!');
-      onDismiss();
+      await onAdd(newItem); // Chama a função de callback passada pela Home
+
+      // Limpar campos após adicionar
+      setNome('');
+      setMarca('');
+      setCategoria('');
+      setQuantidade('1');
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
     }
-
-    // Limpar campos após adicionar
-    setNome('');
-    setMarca('');
-    setCategoria('');
-    setQuantidade('1');
   };
 
   const handleAumentarQuantidade = () => {

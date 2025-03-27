@@ -115,6 +115,86 @@ export const addItem = async (item: Item) => {
   });
 };
 
+export const getItems = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM inventario;',
+        [],
+        (_, results) => {
+          const items: Item[] = [];
+          for (let i = 0; i < results.rows.length; i++) {
+            items.push(results.rows.item(i));
+          }
+          resolve(items);
+        },
+        (_, error) => {
+          console.error('Erro ao buscar itens:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+  );
+};
+
+export const deleteItem = async (id: number) => {
+  console.log('Deletando item com ID:', id);
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          'DELETE FROM inventario WHERE id = ?;',
+          [id],
+          (_, results) => {
+            console.log('Item deletado com sucesso! ID:?, Results: ?', [id, results]);
+          },
+          (_, error) => {
+            console.error('Erro ao deletar item:', error);
+            reject(error);
+          }
+        );
+      },
+      (error) => {
+        console.error('Erro na transação ao deletar item:', error);
+        reject(error);
+      },
+      () => {
+        console.log('Transação concluída com sucesso ao deletar item');
+        resolve(true);
+      }
+      );
+  }
+  );};
+
+  export const updateItem = async (item: Item) => {
+  console.log('Atualizando item:', item);
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          'UPDATE inventario SET nome = ?, marca = ?, categoria = ?, quantidade = ? WHERE id = ?;',
+          [item.nome, item.marca, item.categoria, item.quantidade, item.id],
+          (_, results) => {
+            console.log('Item atualizado com sucesso! ID: ?, Result: ?', [item.id, results]);
+          },
+          (_, error) => {
+            console.error('Erro ao atualizar item:', error);
+            reject(error);
+          }
+        );
+      },
+      (error) => {
+        console.error('Erro na transação ao atualizar item:', error);
+        reject(error);
+      },
+      () => {
+        console.log('Transação concluída com sucesso ao atualizar item');
+        resolve(true);
+      }
+    );
+  });};
+
 export const closeDatabase = async () => {
   await db.close();
 };
