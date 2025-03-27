@@ -14,7 +14,7 @@ import {Item} from '../types/item';
 type EditItemDialogProps = {
   visible: boolean;
   onDismiss: () => void;
-  onEdit: (item: Item) => void;
+  onEdit: (item: Item) => Promise<void>;
   item: Item | null;
 };
 
@@ -38,19 +38,27 @@ export const EditItemDialog = ({
     }
   }, [item]);
 
-  const handleSalvar = () => {
-    if (!nome.trim() || !marca.trim() || !categoria.trim()) {
+  const handleSalvar = async () => {
+    if (!nome.trim() || !marca.trim() || !categoria.trim() || !item) {
       return;
     }
 
-    if (item) {
-      onEdit({
+    try {
+      await onEdit({
         ...item,
         nome: nome.trim(),
         marca: marca.trim(),
         categoria: categoria.trim(),
         quantidade: parseInt(quantidade, 10),
       });
+
+      // Limpar campos após editar
+      setNome('');
+      setMarca('');
+      setCategoria('');
+      setQuantidade('1');
+    } catch (error) {
+      console.error('Erro ao editar item:', error);
     }
   };
 

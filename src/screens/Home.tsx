@@ -63,8 +63,7 @@ export const Home = () => {
   const handleEditarItem = async (itemEditado: Item) => {
     try {
       await updateItem(itemEditado);
-      const itensAtualizados = await getItems();
-      setItems(itensAtualizados as Item[]);
+      await carregarItens(); // Reusa a mesma função de carregar itens
       setEditDialogVisible(false);
       setSelectedItem(null);
     } catch (error) {
