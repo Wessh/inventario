@@ -15,6 +15,8 @@ export const openDatabase = async (): Promise<SQLiteDatabase> => {
             `CREATE TABLE IF NOT EXISTS inventario (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
               nome TEXT,
+              marca TEXT,
+              categoria TEXT,
               quantidade INTEGER
             );`,
             [],
@@ -100,7 +102,7 @@ export const getItens = async () => {
 export const addItem = async (item: Item) => {
   return new Promise((resolve) => {
     db.transaction((tx) => {
-      tx.executeSql('INSERT INTO inventario (nome, quantidade) VALUES (?, ?);', [item.nome, item.quantidade], (_, results) => {
+      tx.executeSql('INSERT INTO inventario (nome, marca, categoria, quantidade) VALUES (?, ?, ?, ?);', [item.nome, item.marca, item.categoria, item.quantidade], (_, results) => {
         resolve(results);
       });
     });
@@ -111,7 +113,7 @@ export const addItem = async (item: Item) => {
 export const updateItem = async (item: Item) => {
   return new Promise((resolve) => {
     db.transaction((tx) => {
-      tx.executeSql('UPDATE inventario SET nome = ?, quantidade = ? WHERE id = ?;', [item.nome, item.quantidade, item.id], (_, results) => {
+      tx.executeSql('UPDATE inventario SET nome = ?, marca = ?, categoria = ?, quantidade = ? WHERE id = ?;', [item.nome, item.marca, item.categoria, item.quantidade, item.id], (_, results) => {
         resolve(results);
       });
     });
