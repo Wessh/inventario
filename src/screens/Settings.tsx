@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {View, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Text, Surface, TextInput, Button} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
 import {styles} from '../styles/home.styles';
 import {getNomeAplicativo, updateConfig} from '../services/database';
 
 export const Settings = () => {
+  const navigation = useNavigation();
   const [appTitle, setAppTitle] = useState('Inventário');
 
   useEffect(() => {
@@ -14,9 +16,31 @@ export const Settings = () => {
     });
   }, []);
 
-  const handleSaveTitle = () => {
-    updateConfig(appTitle);
-    console.log('Novo título:', appTitle);
+  const handleSaveTitle = async () => {
+    try {
+      await updateConfig(appTitle);
+      console.log('Novo título salvo:', appTitle);
+
+      Alert.alert(
+        'Configurações Salvas',
+        'Para aplicar as alterações, o aplicativo precisa ser reiniciado.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.goBack(); // Volta para a tela anterior
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      Alert.alert(
+        'Erro',
+        'Não foi possível salvar as configurações.',
+        [{text: 'OK'}]
+      );
+    }
   };
 
   return (
