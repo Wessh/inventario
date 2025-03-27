@@ -18,7 +18,8 @@ import {Settings} from './src/screens/Settings';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {openDatabase, getNomeAplicativo} from './src/services/database';
-import { View, ActivityIndicator, Text } from 'react-native'; // Adicione estes imports
+import { View, ActivityIndicator, Text } from 'react-native';
+import { loadingStyles } from './src/styles/loading.styles';
 
 const Stack = createNativeStackNavigator();
 
@@ -92,10 +93,10 @@ const App = () => {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+      <View style={loadingStyles.container}>
         <ActivityIndicator size="large" color="#1976D2" />
         {error && (
-          <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>
+          <Text style={loadingStyles.errorText}>{error}</Text>
         )}
       </View>
     );
