@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, {useState, useEffect} from 'react';
-import {View, FlatList, Text} from 'react-native';
+import {View, FlatList, Text, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {IconButton, Surface, Searchbar, useTheme, Divider, FAB} from 'react-native-paper';
 import {styles} from '../styles/home.styles';
@@ -72,17 +72,37 @@ export const Home = () => {
   };
 
   const handleExcluirItem = async (item: Item) => {
-    try {
-      if (item.id !== undefined) {
-        await deleteItem(item.id);
-      } else {
-        console.error('Erro: O item não possui um ID válido.');
-      }
-      const itensAtualizados = await getItems();
-      setItems(itensAtualizados as Item[]);
-    } catch (error) {
-      console.error('Erro ao excluir item:', error);
-    }
+    Alert.alert(
+      'Confirmar exclusão',
+      `Deseja realmente excluir o item "${item.nome}"?`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (!item.id) {
+                throw new Error('Item sem ID válido');
+              }
+
+              console.log('Iniciando exclusão do item:', item.id);
+              await deleteItem(item.id);
+              console.log('Item excluído com sucesso');
+
+              await carregarItens();
+            } catch (error) {
+              console.error('Erro ao excluir item:', error);
+              Alert.alert('Erro', 'Não foi possível excluir o item');
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleAbrirEdicao = (item: Item) => {
