@@ -4,54 +4,62 @@ import { Item } from '../types/item';
 let db: SQLiteDatabase;
 
 export const openDatabase = async (): Promise<SQLiteDatabase> => {
+  console.log('[DB] Iniciando abertura do banco de dados');
+
+  if (db) {
+    console.log('[DB] Banco de dados já está aberto');
+    return db;
+  }
+
   return new Promise((resolve, reject) => {
-    SQLite.openDatabase(
-      { name: 'inventario.db', location: 'default' },
-      (database) => {
-        db = database;
-        console.log('Conexão com o banco de dados estabelecida com sucesso!');
+    try {
+      console.log('[DB] Tentando abrir banco de dados SQLite');
+      SQLite.enablePromise(true);
 
-        db.transaction((tx) => {
-          console.log('Tabela inventario, Ok!');
-          tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS inventario (
-              id INTEGER PRIMARY KEY AUTOINCREMENT, 
-              nome TEXT,
-              marca TEXT,
-              categoria TEXT,
-              quantidade INTEGER
-            );`,
-            [],
-            () => console.log('Tabela inventario, Ok!'),
-            (_, error) => console.error('Erro ao criar tabela inventario:', error)
+      SQLite.openDatabase(
+        {
+          name: 'inventario.db',
+          location: 'default',
+        },
+        (database: SQLiteDatabase) => {
+          console.log('[DB] Callback de sucesso - banco aberto');
+          db = database;
+
+          database.transaction(
+            (tx) => {
+              console.log('[DB] Criando tabelas...');
+              // Tabela inventario
+              tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS inventario (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, marca TEXT, categoria TEXT, quantidade INTEGER);'
+              );
+              // Tabela configuracoes
+              tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS configuracoes (id INTEGER PRIMARY KEY AUTOINCREMENT, nome_aplicativo TEXT);'
+              );
+              // Inserir valor padrão
+              tx.executeSql(
+                "INSERT OR IGNORE INTO configuracoes (id, nome_aplicativo) VALUES (1, 'Inventário');"
+              );
+            },
+            (error) => {
+              console.error('[DB] Erro na transação:', error);
+              reject(error);
+            },
+            () => {
+              console.log('[DB] Transação completada com sucesso');
+              resolve(database);
+            }
           );
-
-          tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS configuracoes (
-              id INTEGER PRIMARY KEY AUTOINCREMENT, 
-              nome_aplicativo TEXT
-            );`,
-            [],
-            () => console.log('Tabela configuracoes, Ok!'),
-            (_, error) => console.error('Erro ao criar tabela configuracoes:', error)
-          );
-
-          tx.executeSql(
-            `INSERT INTO configuracoes (nome_aplicativo) 
-              SELECT 'Inventário'
-              WHERE NOT EXISTS (SELECT 1 FROM configuracoes WHERE id = 1);`,
-            [],
-            () => console.log('Dados em configuracoes, Ok!'),
-            (_, error) => console.error('Erro ao inserir dados em configuracoes:', error)
-          );
-
-        });
-      },
-      (error) => {
-        console.error('Erro ao abrir o banco de dados:', error);
-        reject(error);
-      }
-    );
+        },
+        (error) => {
+          console.error('[DB] Erro ao abrir banco:', error);
+          reject(error);
+        }
+      );
+    } catch (error) {
+      console.error('[DB] Erro geral:', error);
+      reject(error);
+    }
   });
 };
 
@@ -59,6 +67,7 @@ export const getNomeAplicativo = async () => {
   return new Promise((resolve) => {
     db.transaction((tx) => {
       tx.executeSql('SELECT nome_aplicativo FROM configuracoes WHERE id = 1;', [], (_, results) => {
+        console.log(`${results.rows.item(0).nome_aplicativo}`);
         resolve(results.rows.item(0).nome_aplicativo);
       });
     });

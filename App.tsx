@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable no-catch-shadow */
 /* eslint-disable react/no-unstable-nested-components */
 /**
  * Sample React Native App
@@ -6,7 +8,7 @@
  * @format
  */
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -16,6 +18,7 @@ import {Settings} from './src/screens/Settings';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {openDatabase, getNomeAplicativo} from './src/services/database';
+import { View, ActivityIndicator, Text } from 'react-native'; // Adicione estes imports
 
 const Stack = createNativeStackNavigator();
 
@@ -51,21 +54,61 @@ const SettingsButton = () => {
 
 
 const App = () => {
-  const [appName, setAppName] = useState<string | string>('Inventário');
+  const [appName, setAppName] = useState('Inventário');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log('useEffect iniciado');
+
     const initializeDb = async () => {
-      await openDatabase();
-      await getNomeAplicativo().then((nome) => {
-        setAppName(nome as string);
-      });
+      console.log('initializeDb função iniciada');
+      try {
+        console.log('Tentando abrir banco de dados...');
+        const dbInstance = await openDatabase();
+        console.log('Banco de dados aberto com sucesso', dbInstance ? 'DB existe' : 'DB null');
+
+        if (!dbInstance) {
+          throw new Error('Banco de dados não foi inicializado corretamente');
+        }
+
+        console.log('Buscando nome do aplicativo...');
+        const nome = await getNomeAplicativo();
+        console.log('Nome retornado:', nome);
+
+        setAppName(typeof nome === 'string' ? nome : 'Inventário');
+      } catch (error) {
+        console.error('Erro detalhado:', error);
+        setError(error instanceof Error ? error.message : 'Erro desconhecido');
+      } finally {
+        setIsLoading(false);
+      }
     };
+
     initializeDb();
+  }, []);
+
+  console.log('Estado atual:', { isLoading, appName, error });
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <ActivityIndicator size="large" color="#1976D2" />
+        {error && (
+          <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>
+        )}
+      </View>
+    );
+  }
+
+  console.log('Renderizando app completo');
 
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName={appName}
+            initialRouteName="Home" // Alterado para uma rota fixa
             screenOptions={{
               headerStyle: {
                 backgroundColor: theme.colors.primary,
@@ -76,13 +119,20 @@ const App = () => {
               },
             }}>
             <Stack.Screen
-              name={appName}
+              name="Home"
               component={Home}
               options={{
+                title: appName, // Usando appName apenas no título
                 headerRight: () => <SettingsButton />,
               }}
             />
-            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen
+              name="Settings"
+              component={Settings}
+              options={{
+                title: 'Configurações',
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
