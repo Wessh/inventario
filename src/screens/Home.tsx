@@ -132,6 +132,20 @@ export const Home = () => {
 
   const getItemsFiltrados = () => {
     return items.filter(item => {
+      // Aplicar busca por texto
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        const matchesSearch =
+          item.nome.toLowerCase().includes(searchLower) ||
+          item.marca.toLowerCase().includes(searchLower) ||
+          item.categoria.toLowerCase().includes(searchLower);
+
+        if (!matchesSearch) {
+          return false;
+        }
+      }
+
+      // Aplicar filtros existentes
       if (filters.categoria && item.categoria !== filters.categoria) {
         return false;
       }
