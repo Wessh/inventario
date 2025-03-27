@@ -14,11 +14,11 @@ import {Item} from '../types/item';
 
 
 const itensIniciais: Item[] = [
-  {id: '1', nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos', quantidade: 5},
-  {id: '2', nome: 'Mouse Wireless', marca: 'Logitech', categoria: 'Periféricos', quantidade: 12},
-  {id: '3', nome: 'Monitor 24"', marca: 'LG', categoria: 'Eletrônicos', quantidade: 8},
-  {id: '4', nome: 'Teclado Mecânico', marca: 'Razer', categoria: 'Periféricos', quantidade: 15},
-  {id: '5', nome: 'Impressora', marca: 'HP', categoria: 'Impressão', quantidade: 3},
+  {id: 1, nome: 'Notebook Dell', marca: 'Dell', categoria: 'Eletrônicos', quantidade: 5},
+  {id: 2, nome: 'Mouse Wireless', marca: 'Logitech', categoria: 'Periféricos', quantidade: 12},
+  {id: 3, nome: 'Monitor 24"', marca: 'LG', categoria: 'Eletrônicos', quantidade: 8},
+  {id: 4, nome: 'Teclado Mecânico', marca: 'Razer', categoria: 'Periféricos', quantidade: 15},
+  {id: 5, nome: 'Impressora', marca: 'HP', categoria: 'Impressão', quantidade: 3},
 ];
 
 const EmptyListComponent = () => (
@@ -49,7 +49,7 @@ export const Home = () => {
   },[]);
 
   const handleAdicionarItem = (novoItem: Omit<Item, 'id'>) => {
-    const novoId = (items.length + 1).toString();
+    const novoId = (items.length + 1);
     setItems([...items, {...novoItem, id: novoId}]);
     setAddDialogVisible(false);
   };
@@ -146,7 +146,7 @@ export const Home = () => {
           <FlatList
             data={getItemsFiltrados()}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id?.toString() || ''}
             ItemSeparatorComponent={() => <Divider />}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={EmptyListComponent}

@@ -15,7 +15,7 @@ import {Home} from './src/screens/Home';
 import {Settings} from './src/screens/Settings';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {getDb, openDatabase, getNomeAplicativo} from './src/services/database';
+import {openDatabase, getNomeAplicativo} from './src/services/database';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,14 +54,11 @@ const App = () => {
   const [appName, setAppName] = useState<string | string>('Inventário');
     const initializeDb = async () => {
       await openDatabase();
-      const db = getDb();
-      console.log(`db: ${db.dbname}`);
       await getNomeAplicativo().then((nome) => {
         setAppName(nome as string);
       });
     };
     initializeDb();
-    console.log(`appName: ${appName}`);
 
   return (
     <PaperProvider theme={theme}>

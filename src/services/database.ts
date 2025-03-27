@@ -9,8 +9,10 @@ export const openDatabase = async (): Promise<SQLiteDatabase> => {
       { name: 'inventario.db', location: 'default' },
       (database) => {
         db = database;
+        console.log('Conexão com o banco de dados estabelecida com sucesso!');
+
         db.transaction((tx) => {
-          console.log('Tabela inventario criada com sucesso!');
+          console.log('Tabela inventario, Ok!');
           tx.executeSql(
             `CREATE TABLE IF NOT EXISTS inventario (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -20,7 +22,7 @@ export const openDatabase = async (): Promise<SQLiteDatabase> => {
               quantidade INTEGER
             );`,
             [],
-            () => console.log('Tabela inventario criada com sucesso!'),
+            () => console.log('Tabela inventario, Ok!'),
             (_, error) => console.error('Erro ao criar tabela inventario:', error)
           );
 
@@ -30,7 +32,7 @@ export const openDatabase = async (): Promise<SQLiteDatabase> => {
               nome_aplicativo TEXT
             );`,
             [],
-            () => console.log('Tabela configuracoes criada com sucesso!'),
+            () => console.log('Tabela configuracoes, Ok!'),
             (_, error) => console.error('Erro ao criar tabela configuracoes:', error)
           );
 
@@ -39,24 +41,10 @@ export const openDatabase = async (): Promise<SQLiteDatabase> => {
               SELECT 'Inventário'
               WHERE NOT EXISTS (SELECT 1 FROM configuracoes WHERE id = 1);`,
             [],
-            () => console.log('Dados inseridos em configuracoes com sucesso!'),
+            () => console.log('Dados em configuracoes, Ok!'),
             (_, error) => console.error('Erro ao inserir dados em configuracoes:', error)
           );
 
-          tx.executeSql(
-            'SELECT * FROM configuracoes;',
-            [],
-            (_, results) => {
-              if (results.rows.length > 0) {
-                console.log(results.rows.item(0).nome_aplicativo);
-              }
-              resolve(db);
-            },
-            (_, error) => {
-              console.error('Erro ao selecionar dados de configuracoes:', error);
-              reject(error);
-            }
-          );
         });
       },
       (error) => {
@@ -87,50 +75,39 @@ export const updateConfig = async (nome_aplicativo: string) => {
   });
 };
 
-//Carrega todos os itens da tabela inventario
-export const getItens = async () => {
-  return new Promise((resolve) => {
-    db.transaction((tx) => {
-      tx.executeSql('SELECT * FROM inventario;', [], (_, results) => {
-        resolve(results);
-      });
-    });
-  });
-};
-
-//Adiciona um item na tabela inventario
 export const addItem = async (item: Item) => {
-  return new Promise((resolve) => {
-    db.transaction((tx) => {
-      tx.executeSql('INSERT INTO inventario (nome, marca, categoria, quantidade) VALUES (?, ?, ?, ?);', [item.nome, item.marca, item.categoria, item.quantidade], (_, results) => {
-        resolve(results);
-      });
-    });
-  });
-  };
-
-//Atualiza um item na tabela inventario
-export const updateItem = async (item: Item) => {
-  return new Promise((resolve) => {
-    db.transaction((tx) => {
-      tx.executeSql('UPDATE inventario SET nome = ?, marca = ?, categoria = ?, quantidade = ? WHERE id = ?;', [item.nome, item.marca, item.categoria, item.quantidade, item.id], (_, results) => {
-        resolve(results);
-      });
-    });
-  });
-};
-
-//Exclui um item da tabela inventario
-export const deleteItem = async (id: number) => {
-  return new Promise((resolve) => {
-    db.transaction((tx) => {
-      tx.executeSql('DELETE FROM inventario WHERE id = ?;', [id], (_, results) => {
-        resolve(results);
-      });
-    });
+  console.log('Adicionando item:', item);
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          'INSERT INTO inventario (nome, marca, categoria, quantidade) VALUES (?, ?, ?, ?);',
+          [item.nome, item.marca, item.categoria, item.quantidade],
+          (_, results) => {
+            console.log('Item adicionado com sucesso! ID:', results.insertId);
+          },
+          (_, error) => {
+            console.error('Erro ao adicionar item:', error);
+            console.log('Detalhes do erro:', error.message);
+            throw error;
+          }
+        );
+      },
+      (error) => {
+        console.error('Erro na transação ao adicionar item:', error);
+        reject(error);
+      },
+      () => {
+        console.log('Transação concluída com sucesso ao adicionar item');
+        resolve(true);
+      }
+    );
   });
 };
 
+export const closeDatabase = async () => {
+  await db.close();
+};
 //Retorna o banco de dados
 export const getDb = () => {
   return db;

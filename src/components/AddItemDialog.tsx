@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {styles} from '../styles/dialog.styles';
 import {Item} from '../types/item';
+import {addItem} from '../services/database';
 
 type AddItemDialogProps = {
   visible: boolean;
@@ -20,24 +21,38 @@ type AddItemDialogProps = {
 export const AddItemDialog = ({
   visible,
   onDismiss,
-  onAdd,
+  //onAdd,
 }: AddItemDialogProps) => {
   const [nome, setNome] = useState('');
   const [marca, setMarca] = useState('');
   const [categoria, setCategoria] = useState('');
   const [quantidade, setQuantidade] = useState('1');
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (!nome.trim() || !marca.trim() || !categoria.trim()) {
       return;
     }
-
+/*
     onAdd({
       nome: nome.trim(),
       marca: marca.trim(),
       categoria: categoria.trim(),
       quantidade: parseInt(quantidade, 10),
-    });
+    });*/
+
+    const newItem: Omit<Item, 'id'> = {
+      nome: nome.trim(),
+      marca: marca.trim(),
+      categoria: categoria.trim(),
+      quantidade: parseInt(quantidade, 10),
+    };
+
+    try {
+      await addItem(newItem);
+      console.log('Item adicionado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao adicionar item:', error);
+    }
 
     // Limpar campos após adicionar
     setNome('');
