@@ -109,4 +109,25 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  dropdown: {
+    borderColor: '#ccc',
+    marginBottom: 15,
+    borderRadius: 8,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  searchInput: {
+    borderColor: '#ccc',
+    borderRadius: 8,
+    fontSize: 16,
+  },
+  customItem: {
+    backgroundColor: '#f0f0f0',
+  },
+  customItemLabel: {
+    color: '#1976D2',
+    fontWeight: 'bold',
+  },
 });

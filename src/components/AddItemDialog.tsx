@@ -8,8 +8,18 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import {styles} from '../styles/dialog.styles';
 import {Item} from '../types/item';
+
+// Categorias predefinidas
+const CATEGORIAS_PREDEFINIDAS = [
+  {label: 'Perfumaria', value: 'Perfumaria'},
+  {label: 'Corpo e Banho', value: 'Corpo e Banho'},
+  {label: 'Make', value: 'Make'},
+  {label: 'Cabelos', value: 'Cabelos'},
+  {label: 'Skincare', value: 'Skincare'},
+];
 
 type AddItemDialogProps = {
   visible: boolean;
@@ -17,15 +27,23 @@ type AddItemDialogProps = {
   onAdd: (item: Omit<Item, 'id'>) => void;
 };
 
-export const AddItemDialog = ({
-  visible,
-  onDismiss,
-  onAdd,
-}: AddItemDialogProps) => {
+export const AddItemDialog = ({visible, onDismiss, onAdd}: AddItemDialogProps) => {
   const [nome, setNome] = useState('');
   const [marca, setMarca] = useState('');
   const [categoria, setCategoria] = useState('');
   const [quantidade, setQuantidade] = useState('1');
+
+  // Estados para o dropdown
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState(CATEGORIAS_PREDEFINIDAS);
+
+  // Função para adicionar nova categoria
+  const handleAddCategoria = (text: string) => {
+    if (text && !items.find(item => item.value === text)) {
+      setItems([...items, {label: text, value: text}]);
+    }
+    setCategoria(text);
+  };
 
   const handleSalvar = async () => {
     if (!nome.trim() || !marca.trim() || !categoria.trim()) {
@@ -94,12 +112,27 @@ export const AddItemDialog = ({
               onChangeText={setMarca}
               placeholderTextColor="#757575"
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Categoria"
+            <DropDownPicker
+              open={open}
               value={categoria}
-              onChangeText={setCategoria}
-              placeholderTextColor="#757575"
+              items={items}
+              setOpen={setOpen}
+              setValue={setCategoria}
+              setItems={setItems}
+              searchable={true}
+              addCustomItem={true}
+              onChangeSearchText={handleAddCategoria}
+              searchPlaceholder="Digite para buscar ou adicionar..."
+              placeholder="Selecione ou adicione uma categoria"
+              style={styles.dropdown}
+              textStyle={styles.dropdownText}
+              searchTextInputStyle={styles.searchInput}
+              customItemContainerStyle={styles.customItem}
+              customItemLabelStyle={styles.customItemLabel}
+              listMode="SCROLLVIEW"
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+              }}
             />
             <View style={styles.quantidadeContainer}>
               <Text style={styles.quantidadeLabel}>Quantidade</Text>
