@@ -10,7 +10,7 @@ import {EditItemDialog} from '../components/EditItemDialog';
 import {FilterDialog} from '../components/FilterDialog';
 import {ActiveFilters} from '../components/ActiveFilters';
 import {Item} from '../types/item';
-import {getItems, addItem, updateItem, deleteItem} from '../services/database'; // Adicione este import
+import {getItems, addItem, updateItem, deleteItem, findSimilarItem} from '../services/database'; // Adicione este import
 
 const EmptyListComponent = () => (
   <View style={styles.emptyContainer}>
@@ -52,11 +52,47 @@ export const Home = () => {
 
   const handleAdicionarItem = async (novoItem: Omit<Item, 'id'>) => {
     try {
+      // Verifica se já existe um item similar
+      const itemExistente = await findSimilarItem(
+        novoItem.nome,
+        novoItem.marca,
+        novoItem.categoria
+      );
+
+      if (itemExistente) {
+        Alert.alert(
+          'Item Existente',
+          `Já existe um item "${itemExistente.nome}" com a mesma marca e categoria. Deseja somar a quantidade?`,
+          [
+            {
+              text: 'Cancelar',
+              style: 'cancel',
+            },
+            {
+              text: 'Somar',
+              onPress: async () => {
+                const itemAtualizado: Item = {
+                  ...itemExistente,
+                  quantidade: itemExistente.quantidade + novoItem.quantidade,
+                };
+
+                await updateItem(itemAtualizado);
+                await carregarItens();
+                setAddDialogVisible(false);
+              },
+            },
+          ]
+        );
+        return;
+      }
+
+      // Se não existe item similar, adiciona normalmente
       await addItem(novoItem);
-      await carregarItens(); // Recarrega a lista após adicionar
+      await carregarItens();
       setAddDialogVisible(false);
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
+      Alert.alert('Erro', 'Não foi possível adicionar o item');
     }
   };
 

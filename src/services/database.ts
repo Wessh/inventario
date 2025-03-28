@@ -195,6 +195,28 @@ export const deleteItem = async (id: number) => {
     );
   });};
 
+export const findSimilarItem = async (nome: string, marca: string, categoria: string): Promise<Item | null> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM inventario WHERE LOWER(TRIM(nome)) = LOWER(TRIM(?)) AND LOWER(TRIM(marca)) = LOWER(TRIM(?)) AND LOWER(TRIM(categoria)) = LOWER(TRIM(?));',
+        [nome, marca, categoria],
+        (_, results) => {
+          if (results.rows.length > 0) {
+            resolve(results.rows.item(0));
+          } else {
+            resolve(null);
+          }
+        },
+        (_, error) => {
+          console.error('Erro ao buscar item similar:', error);
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
 export const closeDatabase = async () => {
   await db.close();
 };
