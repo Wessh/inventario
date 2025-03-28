@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Serviço de banco de dados SQLite
+ * Para documentação detalhada, veja: ../docs/database.docs.ts
+ */
 import SQLite, { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { Item } from '../types/item';
 

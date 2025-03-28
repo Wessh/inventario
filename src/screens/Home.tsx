@@ -1,4 +1,7 @@
-/* eslint-disable react/no-unstable-nested-components */
+/**
+ * @fileoverview Tela principal do aplicativo de inventário
+ * Para documentação detalhada, veja: ../docs/Home.docs.ts
+ */
 import React, {useState, useEffect} from 'react';
 import {View, FlatList, Text, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -18,6 +21,89 @@ const EmptyListComponent = () => (
   </View>
 );
 
+/**
+ * Estados do componente:
+ * @property {string} searchQuery - Texto de pesquisa
+ * @property {Item[]} items - Lista de itens do inventário
+ * @property {boolean} addDialogVisible - Controla visibilidade do diálogo de adição
+ * @property {boolean} editDialogVisible - Controla visibilidade do diálogo de edição
+ * @property {boolean} filterDialogVisible - Controla visibilidade do diálogo de filtros
+ * @property {Item|null} selectedItem - Item selecionado para edição
+ * @property {Object} filters - Filtros ativos
+ */
+
+/**
+ * Carrega os itens do banco de dados.
+ * @async
+ * @function carregarItens
+ * @returns {Promise<void>}
+ */
+
+/**
+ * Adiciona um novo item ao inventário.
+ * Se encontrar um item similar, oferece opção de somar quantidades.
+ * @async
+ * @function handleAdicionarItem
+ * @param {Omit<Item, 'id'>} novoItem - Dados do novo item
+ */
+
+/**
+ * Atualiza um item existente no inventário.
+ * @async
+ * @function handleEditarItem
+ * @param {Item} itemEditado - Item com dados atualizados
+ */
+
+/**
+ * Exclui um item do inventário após confirmação.
+ * @async
+ * @function handleExcluirItem
+ * @param {Item} item - Item a ser excluído
+ */
+
+/**
+ * Abre o diálogo de edição com o item selecionado.
+ * @function handleAbrirEdicao
+ * @param {Item} item - Item a ser editado
+ */
+
+/**
+ * Aplica novos filtros à lista de itens.
+ * @function handleAplicarFiltros
+ * @param {Object} novosFiltros - Novos filtros a serem aplicados
+ */
+
+/**
+ * Remove um filtro específico.
+ * @function handleRemoverFiltro
+ * @param {'categoria' | 'marca' | 'quantidade'} filterType - Tipo do filtro a ser removido
+ */
+
+/**
+ * Retorna lista de categorias únicas dos itens.
+ * @function getCategorias
+ * @returns {string[]} Lista de categorias
+ */
+
+/**
+ * Retorna lista de marcas únicas dos itens.
+ * @function getMarcas
+ * @returns {string[]} Lista de marcas
+ */
+
+/**
+ * Filtra os itens baseado na pesquisa e filtros ativos.
+ * @function getItemsFiltrados
+ * @returns {Item[]} Lista de itens filtrados
+ */
+
+/**
+ * Renderiza um item da lista.
+ * @function renderItem
+ * @param {Object} params - Parâmetros do item
+ * @param {Item} params.item - Item a ser renderizado
+ * @returns {JSX.Element} Componente ItemCard
+ */
 export const Home = () => {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');

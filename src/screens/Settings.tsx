@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Tela de configurações do aplicativo
+ * Para documentação detalhada, veja: ../docs/Settings.docs.ts
+ */
 import React, {useEffect, useState} from 'react';
 import {View, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
