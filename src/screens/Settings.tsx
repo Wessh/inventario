@@ -5,6 +5,7 @@ import {Text, Surface, TextInput, Button} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from '../styles/home.styles';
 import {getNomeAplicativo, updateConfig} from '../services/database';
+import RNRestart from 'react-native-restart';
 
 export const Settings = () => {
   const navigation = useNavigation();
@@ -23,12 +24,18 @@ export const Settings = () => {
 
       Alert.alert(
         'Configurações Salvas',
-        'Para aplicar as alterações, o aplicativo precisa ser reiniciado.',
+        'Deseja reiniciar o aplicativo agora para aplicar as alterações?',
         [
           {
-            text: 'OK',
+            text: 'Não',
+            style: 'cancel',
+            onPress: () => navigation.goBack(),
+          },
+          {
+            text: 'Sim',
             onPress: () => {
-              navigation.goBack(); // Volta para a tela anterior
+              // Reinicia o aplicativo
+              RNRestart.Restart();
             },
           },
         ]
