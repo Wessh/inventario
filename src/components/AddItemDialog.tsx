@@ -58,7 +58,7 @@ export const AddItemDialog = ({visible, onDismiss, onAdd}: AddItemDialogProps) =
     };
 
     try {
-      await onAdd(newItem); // Chama a função de callback passada pela Home
+      await onAdd(newItem);
 
       // Limpar campos após adicionar
       setNome('');
